@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foto a PDF</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        canvas { box-shadow: 0 4px 6px rgba(0,0,0,.1); max-width: 100%; height: auto; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body class="bg-white h-screen w-screen overflow-x-hidden">
+
+    <div class="w-full h-full flex flex-col">
+
+        <div class="bg-blue-600 p-6 text-center shadow-md z-10">
+            <h1 class="text-2xl font-bold text-white">
+                <i class="fa-solid fa-file-pdf mr-2"></i>Foto a PDF
+            </h1>
+            <p class="text-blue-100 text-sm">Sube una imagen y genera tu PDF</p>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-center items-center p-6 w-full max-w-2xl mx-auto">
+
+            <div class="w-full">
+                <label class="block text-sm font-bold mb-2 text-gray-700 text-center">1. Selecciona una imagen</label>
+                
+                <div onclick="photoInput.click()" class="border-4 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="file" id="photoInput" accept="image/*" class="hidden">
+                    <div class="text-6xl text-gray-300 mb-2">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <p id="fileName" class="text-gray-500 font-medium">Toca para subir o tomar foto</p>
+                </div>
+
+                <div id="canvasContainer" class="hidden mt-6 text-center bg-gray-100 p-2 rounded-lg">
+                    <canvas id="miCanvas" class="mx-auto rounded border bg-white"></canvas>
+                </div>
+
+                <button id="sendBtn" disabled onclick="enviar()"
+                    class="mt-6 w-full bg-gray-200 text-gray-400 py-4 rounded-xl font-bold text-lg shadow-sm cursor-not-allowed transition-all">
+                    Generar PDF
+                </button>
+
+                <div id="status" class="hidden mt-4 text-sm text-center p-3 rounded-lg font-medium"></div>
+                <div id="downloadContainer" class="hidden mt-4 text-center"></div>
+            </div>
+        
+        </div>
+
+        <div class="p-4 text-center text-xs text-gray-400 bg-gray-50">
+            DLP Academy Tool
+        </div>
+
+    </div>
+
+    <script>
+        /* URL DEL WEBHOOK */
+        const N8N_WEBHOOK_URL = "http://localhost:5678/webhook-test/711e538b-9d63-42bb-8494-873301ffdf39";
+
+        const canvas = document.getElementById("miCanvas");
+        const ctx = canvas.getContext("2d");
+        const sendBtn = document.getElementById("sendBtn");
+        const status = document.getElementById("status");
+        const fileName = document.getElementById("fileName");
+        const downloadContainer = document.getElementById("downloadContainer");
+
+        photoInput.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileName.textContent = file.name;
+            const reader = new FileReader();
+
+            reader.onload = ev => {
+                const img = new Image();
+                img.onload = () => {
+                    const max = 1024;
+                    let w = img.width, h = img.height;
+                    if (w > max) { h *= max / w; w = max; }
+                    canvas.width = w;
+                    canvas.height = h;
+                    ctx.drawImage(img,0,0,w,h);
+                    canvasContainer.classList.remove("hidden");
+                    activar();
+                }
+                img.src = ev.target.result;
+            }
+            reader.readAsDataURL(file);
+        };
+
+        function activar(){
+            sendBtn.disabled = false;
+            sendBtn.className = "mt-6 w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transform active:scale-95 transition-all";
+        }
+
+        function mensaje(txt, ok=true){
+            status.innerHTML = txt;
+            status.className = `mt-4 text-sm text-center p-3 rounded-lg font-medium ${
+                ok ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+            }`;
+            status.classList.remove("hidden");
+        }
+
+        async function enviar() {
+            sendBtn.innerHTML = `<span class="loader inline-block mr-2 align-middle"></span> Procesando...`;
+            sendBtn.disabled = true;
+            downloadContainer.classList.add("hidden");
+
+            canvas.toBlob(async blob => {
+                const fd = new FormData();
+                fd.append("data", blob, "imagen.jpg");
+
+                try {
+                    const res = await fetch(N8N_WEBHOOK_URL,{
+                        method:"POST",
+                        body:fd
+                    });
+
+                    if (!res.ok) throw "n8n no respondió ("+res.status+")";
+
+                    const data = await res.blob();
+
+                    // Descargar automáticamente
+                    descargar(data,"Documento.pdf");
+
+                    // Crear botón para descargar nuevamente
+                    crearBotonDescarga(data, "Documento.pdf");
+
+                    mensaje("¡PDF listo! La descarga comenzará automáticamente.");
+                }
+                catch(e){
+                    mensaje("Error: Verifica que n8n esté activo y el túnel funcionando.", false);
+                    console.error(e);
+                }
+                finally {
+                    sendBtn.innerHTML="Generar PDF";
+                    activar();
+                }
+            },"image/jpeg",0.8);
+        }
+
+        function descargar(blob,nombre){
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download=nombre;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function crearBotonDescarga(blob, nombre) {
+            downloadContainer.innerHTML = "";
+            const btn = document.createElement("button");
+            btn.innerHTML = '<i class="fa-solid fa-download mr-2"></i> Descargar PDF nuevamente';
+            btn.className = "mt-4 w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 transition-all";
+            btn.onclick = () => descargar(blob, nombre);
+            downloadContainer.appendChild(btn);
+            downloadContainer.classList.remove("hidden");
+        }
+    </script>
+
+</body>
+</html>
