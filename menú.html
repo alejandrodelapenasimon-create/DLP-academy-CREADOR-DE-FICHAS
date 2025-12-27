@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menú Principal - DLP Academy</title>
+<link rel="icon" type="image/png" href="logo.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+body { font-family: 'Inter', sans-serif; }
+button.menu-btn {
+    transition: all 0.3s ease;
+}
+button.menu-btn:hover {
+    transform: scale(1.05);
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center">
+
+<!-- CABECERA -->
+<header class="mb-12 text-center">
+    <h1 class="text-4xl font-extrabold text-blue-600 mb-2">
+        <i class="fa-solid fa-graduation-cap mr-2"></i>DLP Academy
+    </h1>
+    <p class="text-gray-500 text-lg">Selecciona una opción para continuar</p>
+</header>
+
+<!-- MENÚ PRINCIPAL -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl px-6">
+
+    <button onclick="window.location.href='crear-ficha.html'" 
+        class="menu-btn bg-blue-600 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-blue-700">
+        <i class="fa-solid fa-file-pdf text-4xl mb-3"></i>
+        <span class="text-xl font-semibold">Crear Ficha</span>
+    </button>
+
+    <button onclick="window.location.href='ficha-custom.html'" 
+        class="menu-btn bg-green-600 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-green-700">
+        <i class="fa-solid fa-sliders text-4xl mb-3"></i>
+        <span class="text-xl font-semibold">Ficha Customizada</span>
+    </button>
+
+    <button onclick="window.location.href='solucionario.html'" 
+        class="menu-btn bg-yellow-500 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-yellow-600">
+        <i class="fa-solid fa-book-open text-4xl mb-3"></i>
+        <span class="text-xl font-semibold">Solucionario</span>
+    </button>
+
+    <button onclick="window.location.href='modo-examen.html'" 
+        class="menu-btn bg-red-600 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-red-700">
+        <i class="fa-solid fa-clock text-4xl mb-3"></i>
+        <span class="text-xl font-semibold">Modo Examen</span>
+    </button>
+
+</div>
+
+<!-- PIE DE PÁGINA -->
+<footer class="mt-12 text-center text-gray-400 text-xs">
+    &copy; 2025 DLP Academy Tool
+</footer>
+
+</body>
+</html>
