@@ -34,19 +34,7 @@
 
 <main class="max-w-2xl mx-auto p-6">
 
-  <!-- Curso -->
-  <label class="block font-bold mb-2 text-gray-700 text-center">Curso</label>
-  <input id="curso" type="text"
-    placeholder="Ej: 3º ESO, 1º Bachillerato"
-    class="w-full p-3 mb-4 border rounded-lg text-center font-medium">
-
-  <!-- Asignatura -->
-  <label class="block font-bold mb-2 text-gray-700 text-center">Asignatura</label>
-  <input id="asignatura" type="text"
-    placeholder="Ej: Matemáticas"
-    class="w-full p-3 mb-6 border rounded-lg text-center font-medium">
-
-  <!-- Subida -->
+  <!-- SUBIDA DE ARCHIVO -->
   <div onclick="archivo.click()"
     class="border-4 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 transition">
     <input type="file" id="archivo" accept="image/*,application/pdf" class="hidden">
@@ -58,13 +46,13 @@
     </p>
   </div>
 
-  <!-- Botón -->
+  <!-- BOTÓN -->
   <button id="sendBtn" disabled onclick="enviar()"
     class="mt-6 w-full bg-purple-600 text-white py-4 rounded-xl font-bold text-lg cursor-not-allowed">
     Generar solucionario PDF
   </button>
 
-  <!-- Estado -->
+  <!-- ESTADO -->
   <div id="status" class="hidden mt-4 text-sm text-center p-3 rounded-lg font-medium"></div>
 
 </main>
@@ -101,28 +89,25 @@ function mensaje(txt, ok=true){
 }
 
 async function enviar(){
-  const curso = document.getElementById("curso").value.trim();
-  const asignatura = document.getElementById("asignatura").value.trim();
   const file = archivo.files[0];
-
-  if (!curso || !asignatura || !file){
-    mensaje("Completa curso, asignatura y sube un archivo", false);
+  if (!file){
+    mensaje("Sube una imagen o PDF", false);
     return;
   }
 
   sendBtn.innerHTML =
-    `<span class="loader inline-block mr-2"></span> Procesando solucionario...`;
+    `<span class="loader inline-block mr-2"></span> Analizando ejercicios...`;
   sendBtn.disabled = true;
 
   const fd = new FormData();
   fd.append("archivo", file);
-  fd.append("curso", curso);
-  fd.append("asignatura", asignatura);
 
-  /* 🔴 CLAVE: le decimos claramente a n8n qué queremos */
+  /* 🔴 MENSAJE CLAVE PARA N8N */
   fd.append("tipoDocumento", "solucionario");
-  fd.append("instrucciones",
-    "Analiza los ejercicios del documento y genera el solucionario completo, paso a paso.");
+  fd.append(
+    "instrucciones",
+    "Analiza los ejercicios del archivo y genera el solucionario completo paso a paso en PDF."
+  );
 
   try {
     const res = await fetch(N8N_WEBHOOK_URL, {
@@ -133,7 +118,7 @@ async function enviar(){
     if (!res.ok) throw "Error servidor";
 
     const pdf = await res.blob();
-    descargar(pdf, `Solucionario_${curso}_${asignatura}.pdf`);
+    descargar(pdf, "Solucionario.pdf");
     mensaje("¡Solucionario generado correctamente!");
   }
   catch {
@@ -149,7 +134,7 @@ function descargar(blob, nombre){
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = nombre.replace(/\s+/g, "_");
+  a.download = nombre;
   a.click();
   URL.revokeObjectURL(url);
 }
