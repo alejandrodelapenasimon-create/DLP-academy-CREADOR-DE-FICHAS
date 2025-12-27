@@ -9,91 +9,52 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    canvas {
-      box-shadow: 0 4px 6px rgba(0,0,0,.1);
-      max-width: 100%;
-      height: auto;
-    }
-
-    .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid currentColor;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
+    canvas { box-shadow: 0 4px 6px rgba(0,0,0,.1); max-width: 100%; height: auto; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid currentColor; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body class="bg-white min-h-screen transition-colors duration-[3000ms] ease-in-out">
 
-<!-- CABECERA -->
-<header id="header"
-  class="bg-blue-600 p-6 text-center shadow-md
-         transition-colors duration-[3000ms] ease-in-out">
+<header id="header" class="bg-blue-600 p-6 text-center shadow-md transition-colors duration-[3000ms] ease-in-out">
   <h1 class="text-2xl font-bold text-white">
     <i class="fa-solid fa-graduation-cap mr-2"></i>Ficha de ejercicios
   </h1>
-  <p id="subtitulo" class="text-blue-100 text-sm">
-    Selecciona curso y dificultad
-  </p>
+  <p id="subtitulo" class="text-blue-100 text-sm">Selecciona curso y dificultad</p>
 </header>
 
 <main class="max-w-2xl mx-auto p-6">
-
-  <!-- CURSO -->
   <label class="block font-bold mb-2 text-gray-700 text-center">Curso</label>
-  <input id="curso" type="text" placeholder="Ej: 2º ESO"
-    class="w-full p-3 mb-4 border rounded-lg text-center font-medium">
+  <input id="curso" type="text" placeholder="Ej: 2º ESO" class="w-full p-3 mb-4 border rounded-lg text-center font-medium">
 
-  <!-- NIVEL -->
   <label class="block font-bold mb-2 text-gray-700 text-center">Nivel de dificultad</label>
-  <select id="nivel" onchange="cambiarNivel()"
-    class="w-full p-3 mb-6 border rounded-lg font-bold text-center">
+  <select id="nivel" onchange="cambiarNivel()" class="w-full p-3 mb-6 border rounded-lg font-bold text-center">
     <option value="">Selecciona nivel</option>
     <option value="facil">Fácil</option>
     <option value="medio">Medio</option>
     <option value="dificil">Difícil</option>
   </select>
 
-  <!-- SUBIR IMAGEN -->
-  <div onclick="photoInput.click()"
-    class="border-4 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 transition">
+  <div onclick="photoInput.click()" class="border-4 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 transition">
     <input type="file" id="photoInput" accept="image/*" class="hidden">
-    <div class="text-5xl text-gray-300 mb-2">
-      <i class="fa-solid fa-camera"></i>
-    </div>
-    <p id="fileName" class="text-gray-500 font-medium">
-      Toca para subir una imagen
-    </p>
+    <div class="text-5xl text-gray-300 mb-2"><i class="fa-solid fa-camera"></i></div>
+    <p id="fileName" class="text-gray-500 font-medium">Toca para subir una imagen</p>
   </div>
 
-  <!-- CANVAS -->
   <div id="canvasContainer" class="hidden mt-6 bg-gray-100 p-2 rounded-lg text-center">
     <canvas id="miCanvas" class="mx-auto bg-white rounded border"></canvas>
   </div>
 
-  <!-- BOTÓN -->
-  <button id="sendBtn" disabled onclick="enviar()"
-    class="mt-6 w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg
-           cursor-not-allowed transition-colors duration-[3000ms] ease-in-out">
+  <button id="sendBtn" disabled onclick="enviar()" class="mt-6 w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg cursor-not-allowed transition-colors duration-[3000ms] ease-in-out">
     Generar ficha PDF
   </button>
 
   <div id="status" class="hidden mt-4 text-sm text-center p-3 rounded-lg font-medium"></div>
-
 </main>
 
 <script>
-/* ===== CONFIG ===== */
-const N8N_WEBHOOK_URL = "https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook/711e538b-9d63-42bb-8494-873301ffdf39;
-
-/* ===== ELEMENTOS ===== */
+const N8N_WEBHOOK_URL = "https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook/711e538b-9d63-42bb-8494-873301ffdf39";
 const canvas = document.getElementById("miCanvas");
 const ctx = canvas.getContext("2d");
 const sendBtn = document.getElementById("sendBtn");
@@ -101,49 +62,30 @@ const status = document.getElementById("status");
 const fileName = document.getElementById("fileName");
 const header = document.getElementById("header");
 const subtitulo = document.getElementById("subtitulo");
+const photoInput = document.getElementById("photoInput");
 
-/* ===== TEMAS ===== */
 const temas = {
-  defecto: {
-    color: "bg-blue-600",
-    texto: "Selecciona curso y dificultad"
-  },
-  facil: {
-    color: "bg-green-600",
-    texto: "Nivel fácil"
-  },
-  medio: {
-    color: "bg-yellow-500",
-    texto: "Nivel medio"
-  },
-  dificil: {
-    color: "bg-red-600",
-    texto: "Nivel difícil"
-  }
+  defecto: { color: "bg-blue-600", texto: "Selecciona curso y dificultad" },
+  facil: { color: "bg-green-600", texto: "Nivel fácil" },
+  medio: { color: "bg-yellow-500", texto: "Nivel medio" },
+  dificil: { color: "bg-red-600", texto: "Nivel difícil" }
 };
 
 function cambiarNivel() {
   const nivel = document.getElementById("nivel").value;
   const tema = temas[nivel] || temas.defecto;
-
   const colores = ["bg-blue-600","bg-green-600","bg-yellow-500","bg-red-600"];
-
   header.classList.remove(...colores);
   sendBtn.classList.remove(...colores);
-
   header.classList.add(tema.color);
   sendBtn.classList.add(tema.color);
-
   subtitulo.textContent = tema.texto;
 }
 
-/* ===== SUBIR IMAGEN ===== */
 photoInput.onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
-
   fileName.textContent = file.name;
-
   const reader = new FileReader();
   reader.onload = ev => {
     const img = new Image();
@@ -154,7 +96,7 @@ photoInput.onchange = e => {
       canvas.width = w;
       canvas.height = h;
       ctx.drawImage(img, 0, 0, w, h);
-      canvasContainer.classList.remove("hidden");
+      document.getElementById("canvasContainer").classList.remove("hidden");
       activar();
     };
     img.src = ev.target.result;
@@ -167,23 +109,19 @@ function activar() {
   sendBtn.classList.remove("cursor-not-allowed");
 }
 
-/* ===== MENSAJES ===== */
 function mensaje(txt, ok=true){
   status.textContent = txt;
-  status.className =
-    `mt-4 text-sm text-center p-3 rounded-lg font-medium ${
-      ok ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-    }`;
+  status.className = `mt-4 text-sm text-center p-3 rounded-lg font-medium ${ok ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`;
   status.classList.remove("hidden");
 }
 
-/* ===== ENVIAR ===== */
 async function enviar() {
   const curso = document.getElementById("curso").value.trim();
   const nivel = document.getElementById("nivel").value;
+  const file = photoInput.files[0];
 
-  if (!curso || !nivel) {
-    mensaje("Selecciona curso y nivel", false);
+  if (!curso || !nivel || !file) {
+    mensaje("Completa curso, nivel y sube una imagen", false);
     return;
   }
 
@@ -192,9 +130,12 @@ async function enviar() {
 
   canvas.toBlob(async blob => {
     const fd = new FormData();
-    fd.append("imagen", blob, "imagen.jpg");
+    fd.append("imagen", blob, file.name);
     fd.append("curso", curso);
     fd.append("nivel", nivel);
+    fd.append("nombreArchivo", file.name);
+    fd.append("tamanoArchivo", file.size);
+    fd.append("fechaEnvio", new Date().toISOString());
 
     try {
       const res = await fetch(N8N_WEBHOOK_URL, { method:"POST", body: fd });
@@ -226,5 +167,3 @@ function descargar(blob, nombre){
 
 </body>
 </html>
-
-
