@@ -7,165 +7,96 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-  <style>
-    canvas { box-shadow: 0 4px 6px rgba(0,0,0,.1); max-width: 100%; height: auto; }
-    .loader { border: 4px solid #f3f3f3; border-top: 4px solid currentColor; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-  </style>
 </head>
 
-<body class="bg-white min-h-screen transition-colors duration-[3000ms] ease-in-out">
+<body class="bg-gray-50 min-h-screen flex flex-col transition-colors duration-[3000ms] ease-in-out">
 
-<header id="header" class="bg-blue-600 p-6 text-center shadow-md transition-colors duration-[3000ms] ease-in-out">
-  <h1 class="text-2xl font-bold text-white">
+<header id="header" class="bg-blue-600 p-6 text-center shadow-md transition-colors duration-[3000ms]">
+  <h1 class="text-3xl font-bold text-white">
     <i class="fa-solid fa-graduation-cap mr-2"></i>Ficha de ejercicios
   </h1>
-  <p id="subtitulo" class="text-blue-100 text-sm">Selecciona curso y dificultad</p>
+  <p id="subtitulo" class="text-blue-100 mt-1">Selecciona curso y dificultad</p>
 </header>
 
-<main class="max-w-2xl mx-auto p-6">
-  <label class="block font-bold mb-2 text-gray-700 text-center">Curso</label>
-  <input id="curso" type="text" placeholder="Ej: 2º ESO" class="w-full p-3 mb-4 border rounded-lg text-center font-medium">
+<main class="w-full max-w-6xl mx-auto p-8 flex-grow">
 
-  <label class="block font-bold mb-2 text-gray-700 text-center">Nivel de dificultad</label>
-  <select id="nivel" onchange="cambiarNivel()" class="w-full p-3 mb-6 border rounded-lg font-bold text-center">
-    <option value="">Selecciona nivel</option>
-    <option value="facil">Fácil</option>
-    <option value="medio">Medio</option>
-    <option value="dificil">Difícil</option>
-  </select>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div>
+      <label class="block font-bold mb-2 text-gray-700">Curso</label>
+      <input id="curso" class="w-full p-4 border rounded-xl">
+    </div>
 
-  <div onclick="photoInput.click()" class="border-4 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 transition">
-    <input type="file" id="photoInput" accept="image/*" class="hidden">
-    <div class="text-5xl text-gray-300 mb-2"><i class="fa-solid fa-camera"></i></div>
-    <p id="fileName" class="text-gray-500 font-medium">Toca para subir una imagen</p>
+    <div>
+      <label class="block font-bold mb-2 text-gray-700">Nivel</label>
+      <select id="nivel" onchange="cambiarNivel()" class="w-full p-4 border rounded-xl font-bold">
+        <option value="">Selecciona nivel</option>
+        <option value="facil">Fácil</option>
+        <option value="medio">Medio</option>
+        <option value="dificil">Difícil</option>
+      </select>
+    </div>
   </div>
 
-  <div id="canvasContainer" class="hidden mt-6 bg-gray-100 p-2 rounded-lg text-center">
-    <canvas id="miCanvas" class="mx-auto bg-white rounded border"></canvas>
+  <!-- DROPZONE -->
+  <div id="dropZone"
+    class="group text-blue-500 w-full min-h-[50vh] flex flex-col justify-center items-center
+           border-4 border-dashed border-gray-300 rounded-2xl p-6 cursor-pointer
+           bg-white transition-all duration-500 shadow-sm">
+
+    <div class="text-7xl mb-6 transition-transform duration-300 group-hover:scale-110">
+      <i class="fa-solid fa-camera"></i>
+    </div>
+
+    <p id="fileName" class="text-2xl font-medium text-center px-4">
+      Toca para subir una imagen de los ejercicios
+    </p>
   </div>
 
-  <button id="sendBtn" disabled onclick="enviar()" class="mt-6 w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg cursor-not-allowed transition-colors duration-[3000ms] ease-in-out">
-    Generar ficha PDF
-  </button>
-
-  <div id="status" class="hidden mt-4 text-sm text-center p-3 rounded-lg font-medium"></div>
 </main>
 
 <script>
-const N8N_WEBHOOK_URL = "https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook-test/711e538b-9d63-42bb-8494-873301ffdf39";
-const canvas = document.getElementById("miCanvas");
-const ctx = canvas.getContext("2d");
-const sendBtn = document.getElementById("sendBtn");
-const status = document.getElementById("status");
-const fileName = document.getElementById("fileName");
 const header = document.getElementById("header");
 const subtitulo = document.getElementById("subtitulo");
-const photoInput = document.getElementById("photoInput");
+const dropZone = document.getElementById("dropZone");
 
 const temas = {
-  defecto: { color: "bg-blue-600", texto: "Selecciona curso y dificultad" },
-  facil: { color: "bg-green-600", texto: "Nivel fácil" },
-  medio: { color: "bg-yellow-500", texto: "Nivel medio" },
-  dificil: { color: "bg-red-600", texto: "Nivel difícil" }
+  defecto: {
+    header: "bg-blue-600",
+    drop: "text-blue-500 hover:bg-gradient-to-br hover:from-blue-100 hover:to-blue-200 hover:border-blue-400",
+    texto: "Selecciona curso y dificultad"
+  },
+  facil: {
+    header: "bg-green-600",
+    drop: "text-green-600 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 hover:border-green-400",
+    texto: "Nivel fácil"
+  },
+  medio: {
+    header: "bg-yellow-500",
+    drop: "text-yellow-600 hover:bg-gradient-to-br hover:from-yellow-100 hover:to-yellow-200 hover:border-yellow-400",
+    texto: "Nivel medio"
+  },
+  dificil: {
+    header: "bg-red-600",
+    drop: "text-red-600 hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200 hover:border-red-400",
+    texto: "Nivel difícil"
+  }
 };
 
 function cambiarNivel() {
   const nivel = document.getElementById("nivel").value;
   const tema = temas[nivel] || temas.defecto;
-  const colores = ["bg-blue-600","bg-green-600","bg-yellow-500","bg-red-600"];
-  header.classList.remove(...colores);
-  sendBtn.classList.remove(...colores);
-  header.classList.add(tema.color);
-  sendBtn.classList.add(tema.color);
+
+  header.className = `p-6 text-center shadow-md transition-colors duration-[3000ms] ${tema.header}`;
   subtitulo.textContent = tema.texto;
-}
 
-photoInput.onchange = e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  fileName.textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = new Image();
-    img.onload = () => {
-      const max = 1024;
-      let w = img.width, h = img.height;
-      if (w > max) { h *= max / w; w = max; }
-      canvas.width = w;
-      canvas.height = h;
-      ctx.drawImage(img, 0, 0, w, h);
-      document.getElementById("canvasContainer").classList.remove("hidden");
-      activar();
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-};
-
-function activar() {
-  sendBtn.disabled = false;
-  sendBtn.classList.remove("cursor-not-allowed");
-}
-
-function mensaje(txt, ok=true){
-  status.textContent = txt;
-  status.className = `mt-4 text-sm text-center p-3 rounded-lg font-medium ${ok ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`;
-  status.classList.remove("hidden");
-}
-
-async function enviar() {
-  const curso = document.getElementById("curso").value.trim();
-  const nivel = document.getElementById("nivel").value;
-  const file = photoInput.files[0];
-
-  if (!curso || !nivel || !file) {
-    mensaje("Completa curso, nivel y sube una imagen", false);
-    return;
-  }
-
-  sendBtn.innerHTML = `<span class="loader inline-block mr-2"></span> Procesando...`;
-  sendBtn.disabled = true;
-
-  canvas.toBlob(async blob => {
-    const fd = new FormData();
-    fd.append("imagen", blob, file.name);
-    fd.append("curso", curso);
-    fd.append("nivel", nivel);
-    fd.append("nombreArchivo", file.name);
-    fd.append("tamanoArchivo", file.size);
-    fd.append("fechaEnvio", new Date().toISOString());
-
-    try {
-      const res = await fetch(N8N_WEBHOOK_URL, { method:"POST", body: fd });
-      if (!res.ok) throw "Error servidor";
-
-      const pdf = await res.blob();
-      descargar(pdf, "Ficha.pdf");
-      mensaje("¡Ficha generada correctamente!");
-    }
-    catch {
-      mensaje("Error al generar la ficha", false);
-    }
-    finally {
-      sendBtn.innerHTML = "Generar ficha PDF";
-      activar();
-    }
-  }, "image/jpeg", 0.85);
-}
-
-function descargar(blob, nombre){
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = nombre;
-  a.click();
-  URL.revokeObjectURL(url);
+  dropZone.className = `
+    group w-full min-h-[50vh] flex flex-col justify-center items-center
+    border-4 border-dashed rounded-2xl p-6 cursor-pointer
+    bg-white transition-all duration-500 shadow-sm
+    ${tema.drop}
+  `;
 }
 </script>
 
 </body>
 </html>
-
-
