@@ -11,187 +11,189 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col transition-colors duration-[3000ms] ease-in-out">
 
-<!-- HEADER -->
-<header id="header" class="bg-green-600 p-6 text-center shadow-md transition-colors duration-[3000ms]">
-  <h1 class="text-3xl font-bold text-white flex items-center justify-center">
-    <i class="fa-solid fa-graduation-cap mr-2"></i>Ficha de ejercicios
-  </h1>
-  <p id="subtitulo" class="text-green-100 mt-1">Selecciona curso y dificultad</p>
-</header>
+  <!-- HEADER -->
+  <header id="header" class="bg-green-600 p-6 text-center shadow-md transition-colors duration-[3000ms]">
+    <h1 class="text-3xl font-bold text-white flex items-center justify-center">
+      <i class="fa-solid fa-graduation-cap mr-2"></i>Ficha de ejercicios
+    </h1>
+    <p id="subtitulo" class="text-green-100 mt-1">Selecciona curso y dificultad</p>
+  </header>
 
-<main class="w-full max-w-6xl mx-auto p-8 flex-grow">
+  <!-- MAIN -->
+  <main class="w-full max-w-6xl mx-auto p-8 flex-grow">
 
-  <!-- FORMULARIO -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <div>
-      <label class="block font-bold mb-2 text-gray-700">Curso</label>
-      <input id="curso" class="w-full p-4 border rounded-xl">
+    <!-- FORMULARIO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div>
+        <label class="block font-bold mb-2 text-gray-700">Curso</label>
+        <input id="curso" class="w-full p-4 border rounded-xl">
+      </div>
+
+      <div>
+        <label class="block font-bold mb-2 text-gray-700">Nivel</label>
+        <select id="nivel" onchange="cambiarNivel()" class="w-full p-4 border rounded-xl font-bold">
+          <option value="">Selecciona nivel</option>
+          <option value="facil">Fácil</option>
+          <option value="medio">Medio</option>
+          <option value="dificil">Difícil</option>
+        </select>
+      </div>
     </div>
 
-    <div>
-      <label class="block font-bold mb-2 text-gray-700">Nivel</label>
-      <select id="nivel" onchange="cambiarNivel()" class="w-full p-4 border rounded-xl font-bold">
-        <option value="">Selecciona nivel</option>
-        <option value="facil">Fácil</option>
-        <option value="medio">Medio</option>
-        <option value="dificil">Difícil</option>
-      </select>
-    </div>
-  </div>
+    <!-- DROPZONE -->
+    <div id="dropZone"
+      class="group w-full min-h-[50vh] flex flex-col justify-center items-center
+             border-4 border-dashed border-green-400 rounded-2xl p-6 cursor-pointer
+             bg-white transition-all duration-[3000ms] shadow-sm
+             hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200">
 
-  <!-- DROPZONE -->
-  <div id="dropZone"
-    class="group w-full min-h-[50vh] flex flex-col justify-center items-center
-           border-4 border-dashed border-green-400 rounded-2xl p-6 cursor-pointer
-           bg-white transition-all duration-[3000ms] shadow-sm
-           hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200">
+      <!-- ICONO -->
+      <div id="iconoDrop"
+        class="text-6xl md:text-8xl text-green-600 mb-6
+               transition-all duration-[3000ms] transform
+               group-hover:scale-110">
+        <i class="fa-solid fa-file-arrow-up"></i>
+      </div>
 
-    <!-- ICONO -->
-    <div id="iconoDrop"
-      class="text-6xl md:text-8xl text-green-600 mb-6
-             transition-all duration-[3000ms] transform
-             group-hover:scale-110">
-      <i class="fa-solid fa-file-arrow-up"></i>
+      <p id="fileName" class="text-2xl font-medium text-center px-4 transition-colors duration-[3000ms]">
+        Toca para subir una imagen de los ejercicios
+      </p>
+
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
     </div>
 
-    <p id="fileName" class="text-2xl font-medium text-center px-4 transition-colors duration-[3000ms]">
-      Toca para subir una imagen de los ejercicios
-    </p>
+    <!-- BOTÓN -->
+    <div class="text-center mt-8">
+      <button id="btnEnviar" onclick="enviarAN8N()"
+        class="bg-green-600 hover:bg-green-700
+               text-white font-bold py-4 px-10 rounded-xl text-xl shadow-lg
+               transition-colors duration-[3000ms]">
+        Generar PDF
+      </button>
+    </div>
 
-    <input type="file" id="fileInput" accept="image/*" multiple hidden>
-  </div>
+  </main>
 
-  <!-- BOTÓN -->
-  <div class="text-center mt-8">
-    <button id="btnEnviar" onclick="enviarAN8N()"
-      class="bg-green-600 hover:bg-green-700
-             text-white font-bold py-4 px-10 rounded-xl text-xl shadow-lg
-             transition-colors duration-[3000ms]">
-      Generar PDF
-    </button>
-  </div>
-<footer class="p-3 text-center text-xs text-gray-400 bg-gray-100 flex-none">
+  <!-- FOOTER -->
+  <footer class="p-3 text-center text-xs text-gray-400 bg-gray-100">
     © 2025 DLP Academy Tool
-</footer>
-</main>
+  </footer>
 
-<script>
-const header = document.getElementById("header");
-const subtitulo = document.getElementById("subtitulo");
-const dropZone = document.getElementById("dropZone");
-const iconoDrop = document.getElementById("iconoDrop");
-const fileInput = document.getElementById("fileInput");
-const fileName = document.getElementById("fileName");
-const btnEnviar = document.getElementById("btnEnviar");
+  <script>
+  const header = document.getElementById("header");
+  const subtitulo = document.getElementById("subtitulo");
+  const dropZone = document.getElementById("dropZone");
+  const iconoDrop = document.getElementById("iconoDrop");
+  const fileInput = document.getElementById("fileInput");
+  const fileName = document.getElementById("fileName");
+  const btnEnviar = document.getElementById("btnEnviar");
 
-let archivos = [];
+  let archivos = [];
 
-// 🎨 TEMAS
-const temas = {
-  defecto: {
-    header: "bg-green-600",
-    drop: "border-green-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200",
-    icono: "text-green-600",
-    boton: "bg-green-600 hover:bg-green-700",
-    texto: "Selecciona curso y dificultad"
-  },
-  facil: {
-    header: "bg-green-600",
-    drop: "border-green-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200",
-    icono: "text-green-600",
-    boton: "bg-green-600 hover:bg-green-700",
-    texto: "Nivel fácil"
-  },
-  medio: {
-    header: "bg-yellow-500",
-    drop: "border-yellow-400 hover:bg-gradient-to-br hover:from-yellow-100 hover:to-yellow-200",
-    icono: "text-yellow-600",
-    boton: "bg-yellow-500 hover:bg-yellow-600",
-    texto: "Nivel medio"
-  },
-  dificil: {
-    header: "bg-red-600",
-    drop: "border-red-400 hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200",
-    icono: "text-red-600",
-    boton: "bg-red-600 hover:bg-red-700",
-    texto: "Nivel difícil"
-  }
-};
+  // 🎨 TEMAS
+  const temas = {
+    defecto: {
+      header: "bg-green-600",
+      drop: "border-green-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200",
+      icono: "text-green-600",
+      boton: "bg-green-600 hover:bg-green-700",
+      texto: "Selecciona curso y dificultad"
+    },
+    facil: {
+      header: "bg-green-600",
+      drop: "border-green-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200",
+      icono: "text-green-600",
+      boton: "bg-green-600 hover:bg-green-700",
+      texto: "Nivel fácil"
+    },
+    medio: {
+      header: "bg-yellow-500",
+      drop: "border-yellow-400 hover:bg-gradient-to-br hover:from-yellow-100 hover:to-yellow-200",
+      icono: "text-yellow-600",
+      boton: "bg-yellow-500 hover:bg-yellow-600",
+      texto: "Nivel medio"
+    },
+    dificil: {
+      header: "bg-red-600",
+      drop: "border-red-400 hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200",
+      icono: "text-red-600",
+      boton: "bg-red-600 hover:bg-red-700",
+      texto: "Nivel difícil"
+    }
+  };
 
-function cambiarNivel() {
-  const nivel = document.getElementById("nivel").value;
-  const tema = temas[nivel] || temas.defecto;
+  function cambiarNivel() {
+    const nivel = document.getElementById("nivel").value;
+    const tema = temas[nivel] || temas.defecto;
 
-  header.className = `p-6 text-center shadow-md transition-colors duration-[3000ms] ${tema.header}`;
-  subtitulo.textContent = tema.texto;
+    header.className = `p-6 text-center shadow-md transition-colors duration-[3000ms] ${tema.header}`;
+    subtitulo.textContent = tema.texto;
 
-  dropZone.className = `
-    group w-full min-h-[50vh] flex flex-col justify-center items-center
-    border-4 border-dashed rounded-2xl p-6 cursor-pointer
-    bg-white transition-all duration-[3000ms] shadow-sm
-    ${tema.drop}
-  `;
+    dropZone.className = `
+      group w-full min-h-[50vh] flex flex-col justify-center items-center
+      border-4 border-dashed rounded-2xl p-6 cursor-pointer
+      bg-white transition-all duration-[3000ms] shadow-sm
+      ${tema.drop}
+    `;
 
-  iconoDrop.className = `
-    text-6xl md:text-8xl mb-6 transform
-    transition-all duration-[3000ms]
-    group-hover:scale-110
-    ${tema.icono}
-  `;
+    iconoDrop.className = `
+      text-6xl md:text-8xl mb-6 transform
+      transition-all duration-[3000ms]
+      group-hover:scale-110
+      ${tema.icono}
+    `;
 
-  btnEnviar.className = `
-    ${tema.boton}
-    text-white font-bold py-4 px-10 rounded-xl text-xl shadow-lg
-    transition-colors duration-[3000ms]
-  `;
-}
-
-// CLICK SUBIR
-dropZone.addEventListener("click", () => fileInput.click());
-
-// ARCHIVOS
-fileInput.addEventListener("change", () => {
-  archivos = [...fileInput.files];
-  fileName.textContent = archivos.length
-    ? `${archivos.length} imagen(es) seleccionada(s)`
-    : "Toca para subir una imagen de los ejercicios";
-});
-
-// ENVÍO
-function enviarAN8N() {
-  const curso = document.getElementById("curso").value;
-  const nivel = document.getElementById("nivel").value;
-
-  if (!curso || !nivel || archivos.length === 0) {
-    alert("Completa todos los campos y sube al menos una imagen.");
-    return;
+    btnEnviar.className = `
+      ${tema.boton}
+      text-white font-bold py-4 px-10 rounded-xl text-xl shadow-lg
+      transition-colors duration-[3000ms]
+    `;
   }
 
-  const formData = new FormData();
-  formData.append("curso", curso);
-  formData.append("nivel", nivel);
+  // CLICK SUBIR
+  dropZone.addEventListener("click", () => fileInput.click());
 
-  archivos.forEach((file, i) => {
-    formData.append(`imagen_${i}`, file);
+  // ARCHIVOS
+  fileInput.addEventListener("change", () => {
+    archivos = [...fileInput.files];
+    fileName.textContent = archivos.length
+      ? `${archivos.length} imagen(es) seleccionada(s)`
+      : "Toca para subir una imagen de los ejercicios";
   });
 
-  fetch("https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook-test/711e538b-9d63-42bb-8494-873301ffdf39", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.blob())
-  .then(blob => {
-    const url = window.URL.createObjectURL(blob);
-    window.open(url);
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Error al generar el PDF");
-  });
-}
-</script>
+  // ENVÍO
+  function enviarAN8N() {
+    const curso = document.getElementById("curso").value;
+    const nivel = document.getElementById("nivel").value;
+
+    if (!curso || !nivel || archivos.length === 0) {
+      alert("Completa todos los campos y sube al menos una imagen.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("curso", curso);
+    formData.append("nivel", nivel);
+
+    archivos.forEach((file, i) => {
+      formData.append(`imagen_${i}`, file);
+    });
+
+    fetch("https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook-test/711e538b-9d63-42bb-8494-873301ffdf39", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      window.open(url);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error al generar el PDF");
+    });
+  }
+  </script>
 
 </body>
 </html>
-
-
