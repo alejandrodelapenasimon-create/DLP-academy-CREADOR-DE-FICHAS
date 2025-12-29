@@ -11,14 +11,12 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col transition-colors duration-[3000ms] ease-in-out">
 
-<header id="header"
-  class="bg-blue-600 p-6 text-center shadow-md transition-colors duration-[3000ms]">
+<!-- HEADER -->
+<header id="header" class="bg-green-600 p-6 text-center shadow-md transition-colors duration-[3000ms]">
   <h1 class="text-3xl font-bold text-white flex items-center justify-center">
     <i class="fa-solid fa-graduation-cap mr-2"></i>Ficha de ejercicios
   </h1>
-  <p id="subtitulo" class="text-blue-100 mt-1">
-    Selecciona curso y dificultad
-  </p>
+  <p id="subtitulo" class="text-green-100 mt-1">Selecciona curso y dificultad</p>
 </header>
 
 <main class="w-full max-w-6xl mx-auto p-8 flex-grow">
@@ -32,8 +30,7 @@
 
     <div>
       <label class="block font-bold mb-2 text-gray-700">Nivel</label>
-      <select id="nivel" onchange="cambiarNivel()"
-        class="w-full p-4 border rounded-xl font-bold">
+      <select id="nivel" onchange="cambiarNivel()" class="w-full p-4 border rounded-xl font-bold">
         <option value="">Selecciona nivel</option>
         <option value="facil">Fácil</option>
         <option value="medio">Medio</option>
@@ -45,19 +42,19 @@
   <!-- DROPZONE -->
   <div id="dropZone"
     class="group w-full min-h-[50vh] flex flex-col justify-center items-center
-           border-4 border-dashed border-gray-300 rounded-2xl p-6 cursor-pointer
-           bg-white transition-all duration-[3000ms] shadow-sm">
+           border-4 border-dashed border-green-400 rounded-2xl p-6 cursor-pointer
+           bg-white transition-all duration-[3000ms] shadow-sm
+           hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200">
 
+    <!-- ICONO -->
     <div id="iconoDrop"
-      class="text-6xl md:text-8xl text-gray-300 mb-6
+      class="text-6xl md:text-8xl text-green-600 mb-6
              transition-all duration-[3000ms] transform
              group-hover:scale-110">
       <i class="fa-solid fa-file-arrow-up"></i>
     </div>
 
-    <p id="fileName"
-       class="text-2xl font-medium text-center px-4
-              transition-colors duration-[3000ms]">
+    <p id="fileName" class="text-2xl font-medium text-center px-4 transition-colors duration-[3000ms]">
       Toca para subir una imagen de los ejercicios
     </p>
 
@@ -67,7 +64,7 @@
   <!-- BOTÓN -->
   <div class="text-center mt-8">
     <button id="btnEnviar" onclick="enviarAN8N()"
-      class="bg-blue-600 hover:bg-blue-700
+      class="bg-green-600 hover:bg-green-700
              text-white font-bold py-4 px-10 rounded-xl text-xl shadow-lg
              transition-colors duration-[3000ms]">
       Generar PDF
@@ -81,37 +78,38 @@ const header = document.getElementById("header");
 const subtitulo = document.getElementById("subtitulo");
 const dropZone = document.getElementById("dropZone");
 const iconoDrop = document.getElementById("iconoDrop");
-const btnEnviar = document.getElementById("btnEnviar");
 const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
+const btnEnviar = document.getElementById("btnEnviar");
 
 let archivos = [];
 
+// 🎨 TEMAS
 const temas = {
   defecto: {
-    header: "bg-blue-600",
-    drop: "text-blue-500 hover:bg-gradient-to-br hover:from-blue-100 hover:to-blue-200 hover:border-blue-400",
-    icono: "text-blue-600",
-    boton: "bg-blue-600 hover:bg-blue-700",
+    header: "bg-green-600",
+    drop: "border-green-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200",
+    icono: "text-green-600",
+    boton: "bg-green-600 hover:bg-green-700",
     texto: "Selecciona curso y dificultad"
   },
   facil: {
     header: "bg-green-600",
-    drop: "text-green-600 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 hover:border-green-400",
+    drop: "border-green-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200",
     icono: "text-green-600",
     boton: "bg-green-600 hover:bg-green-700",
     texto: "Nivel fácil"
   },
   medio: {
     header: "bg-yellow-500",
-    drop: "text-yellow-600 hover:bg-gradient-to-br hover:from-yellow-100 hover:to-yellow-200 hover:border-yellow-400",
-    icono: "text-yellow-500",
+    drop: "border-yellow-400 hover:bg-gradient-to-br hover:from-yellow-100 hover:to-yellow-200",
+    icono: "text-yellow-600",
     boton: "bg-yellow-500 hover:bg-yellow-600",
     texto: "Nivel medio"
   },
   dificil: {
     header: "bg-red-600",
-    drop: "text-red-600 hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200 hover:border-red-400",
+    drop: "border-red-400 hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200",
     icono: "text-red-600",
     boton: "bg-red-600 hover:bg-red-700",
     texto: "Nivel difícil"
@@ -122,9 +120,7 @@ function cambiarNivel() {
   const nivel = document.getElementById("nivel").value;
   const tema = temas[nivel] || temas.defecto;
 
-  header.className =
-    `p-6 text-center shadow-md transition-colors duration-[3000ms] ${tema.header}`;
-
+  header.className = `p-6 text-center shadow-md transition-colors duration-[3000ms] ${tema.header}`;
   subtitulo.textContent = tema.texto;
 
   dropZone.className = `
@@ -148,10 +144,10 @@ function cambiarNivel() {
   `;
 }
 
-// Click para subir archivos
+// CLICK SUBIR
 dropZone.addEventListener("click", () => fileInput.click());
 
-// Mostrar cantidad
+// ARCHIVOS
 fileInput.addEventListener("change", () => {
   archivos = [...fileInput.files];
   fileName.textContent = archivos.length
@@ -159,6 +155,7 @@ fileInput.addEventListener("change", () => {
     : "Toca para subir una imagen de los ejercicios";
 });
 
+// ENVÍO
 function enviarAN8N() {
   const curso = document.getElementById("curso").value;
   const nivel = document.getElementById("nivel").value;
