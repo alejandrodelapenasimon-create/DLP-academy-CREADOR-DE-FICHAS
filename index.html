@@ -4,7 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Menú Principal - DLP Academy</title>
+
 <link rel="icon" type="image/png" href="logo.png">
+
+<link rel="apple-touch-icon" href="logo.png">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DLP Academy">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -19,7 +27,6 @@ button.menu-btn:hover {
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center">
 
-<!-- CABECERA CENTRADA -->
 <header class="mb-12 text-center flex flex-col items-center">
     <h1 class="text-4xl font-extrabold text-blue-600 mb-2">
         <i class="fa-solid fa-graduation-cap mr-2"></i>DLP Academy
@@ -27,31 +34,26 @@ button.menu-btn:hover {
     <p class="text-gray-500 text-lg">Selecciona una opción para continuar</p>
 </header>
 
-<!-- MENÚ PRINCIPAL -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl px-6">
 
-    <!-- Crear Ficha -->
     <button onclick="window.location.href='ficha_defecto.html'" 
         class="menu-btn bg-blue-600 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-blue-700">
         <i class="fa-solid fa-file-pdf text-4xl mb-3"></i>
         <span class="text-xl font-semibold">Crear Ficha</span>
     </button>
 
-    <!-- Ficha Customizada -->
     <button onclick="window.location.href='ficha.html'" 
         class="menu-btn bg-green-600 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-green-700">
         <i class="fa-solid fa-sliders text-4xl mb-3"></i>
         <span class="text-xl font-semibold">Ficha Customizada</span>
     </button>
 
-    <!-- Solucionario -->
     <button onclick="window.location.href='SOLUCIONARIO.html'" 
         class="menu-btn bg-yellow-500 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-yellow-600">
         <i class="fa-solid fa-book-open text-4xl mb-3"></i>
         <span class="text-xl font-semibold">Solucionario</span>
     </button>
 
-    <!-- Modo Examen -->
     <button onclick="window.location.href='modo-examen.html'" 
         class="menu-btn bg-red-600 text-white py-6 rounded-xl shadow-lg flex flex-col items-center justify-center hover:bg-red-700">
         <i class="fa-solid fa-clock text-4xl mb-3"></i>
@@ -60,11 +62,9 @@ button.menu-btn:hover {
 
 </div>
 
-<!-- PIE DE PÁGINA -->
 <footer class="mt-12 text-center text-gray-400 text-xs">
     &copy; 2025 DLP Academy Tool
 </footer>
 
 </body>
 </html>
-
