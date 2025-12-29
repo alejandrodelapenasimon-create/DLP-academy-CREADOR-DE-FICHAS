@@ -9,7 +9,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50 min-h-screen flex flex-col transition-colors duration-[3000ms] ease-in-out">
+<body class="bg-gray-50 w-screen h-screen flex flex-col transition-colors duration-[3000ms] ease-in-out">
 
   <!-- HEADER -->
   <header id="header" class="bg-green-600 p-6 text-center shadow-md transition-colors duration-[3000ms]">
@@ -20,7 +20,7 @@
   </header>
 
   <!-- MAIN -->
-  <main class="w-full max-w-6xl mx-auto p-8 flex-grow">
+  <main class="w-full max-w-6xl mx-auto p-8 flex-grow flex flex-col">
 
     <!-- FORMULARIO -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -42,7 +42,7 @@
 
     <!-- DROPZONE -->
     <div id="dropZone"
-      class="group w-full min-h-[50vh] flex flex-col justify-center items-center
+      class="group w-full flex-grow flex flex-col justify-center items-center
              border-4 border-dashed border-green-400 rounded-2xl p-6 cursor-pointer
              bg-white transition-all duration-[3000ms] shadow-sm
              hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200">
@@ -75,7 +75,7 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="p-3 text-center text-xs text-gray-400 bg-gray-100">
+  <footer class="p-3 text-center text-xs text-gray-400 bg-gray-100 mt-auto">
     © 2025 DLP Academy Tool
   </footer>
 
@@ -130,7 +130,7 @@
     subtitulo.textContent = tema.texto;
 
     dropZone.className = `
-      group w-full min-h-[50vh] flex flex-col justify-center items-center
+      group w-full flex-grow flex flex-col justify-center items-center
       border-4 border-dashed rounded-2xl p-6 cursor-pointer
       bg-white transition-all duration-[3000ms] shadow-sm
       ${tema.drop}
