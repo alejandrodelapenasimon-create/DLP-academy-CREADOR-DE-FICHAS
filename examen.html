@@ -145,7 +145,7 @@ function enviarAN8N() {
     formData.append(`imagen_${i}`, file);
   });
 
-  fetch("https://TU-WEBHOOK-DE-N8N", {
+  fetch("https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook-test/711e538b-9d63-42bb-8494-873301ffdf39", {
     method: "POST",
     body: formData
   })
