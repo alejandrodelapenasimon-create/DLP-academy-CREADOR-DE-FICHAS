@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Exámenes PDF</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<!-- HEADER -->
+<header class="bg-red-700 p-6 text-center shadow-md">
+  <!-- 
+       CAMBIOS REALIZADOS:
+       1. Quitamos 'flex-col' (ahora se ponen uno al lado del otro).
+       2. 'justify-center': Centra el grupo (logo + texto) horizontalmente.
+       3. 'items-center': Alinea verticalmente el icono con el texto.
+       4. 'gap-4': Espacio entre el icono y el texto.
+  -->
+  <h1 class="text-3xl font-bold text-white flex justify-center items-center gap-4">
+     <i class="fa-solid fa-clock text-4xl"></i>
+     Generador de Exámenes
+  </h1>
+  <p class="text-red-100 mt-2">
+    Sube imágenes y genera un examen en PDF
+  </p>
+</header>
+
+<main class="w-full max-w-6xl mx-auto p-8 flex-grow">
+
+  <!-- FORMULARIO -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+    <div>
+      <label class="block font-bold mb-2 text-gray-700">Curso</label>
+      <input id="curso" class="w-full p-4 border rounded-xl shadow-sm focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="Ej: 4º ESO">
+    </div>
+
+    <div>
+      <label class="block font-bold mb-2 text-gray-700">Tiempo del examen</label>
+      <select id="tiempo" class="w-full p-4 border rounded-xl font-bold shadow-sm focus:ring-2 focus:ring-red-500 focus:outline-none bg-white">
+        <option value="">Selecciona tiempo</option>
+        <option value="45">45 minutos</option>
+        <option value="60">1 hora</option>
+        <option value="90">1:30 horas</option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- DROPZONE -->
+  <div id="dropZone" 
+    class="group text-red-600 w-full min-h-[45vh] flex flex-col justify-center items-center 
+           border-4 border-dashed border-red-400 rounded-2xl p-6 cursor-pointer 
+           bg-white transition-all duration-500 shadow-sm
+           hover:bg-gradient-to-br hover:from-red-50 hover:to-red-100 hover:border-red-600">
+    
+    <div class="text-7xl mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+      <i class="fa-solid fa-camera"></i>
+    </div>
+
+    <p id="fileName" class="text-2xl font-medium text-center px-4">
+      Toca o arrastra una o varias imágenes del solucionario
+    </p>
+
+    <input id="fileInput" type="file" accept="image/*" multiple hidden>
+  </div>
+
+  <!-- BOTÓN -->
+  <div class="text-center mt-8">
+    <button onclick="enviarAN8N()" 
+      class="bg-red-700 hover:bg-red-800 text-white font-bold py-4 px-12 rounded-xl text-xl shadow-lg transition transform hover:-translate-y-1">
+      Generar examen en PDF
+    </button>
+  </div>
+
+</main>
+
+<script>
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+const fileName = document.getElementById("fileName");
+
+let archivos = [];
+
+// CLICK + DRAG
+dropZone.addEventListener("click", () => fileInput.click());
+
+// Efectos visuales al arrastrar
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('bg-red-50', 'border-red-600');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('bg-red-50', 'border-red-600');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('bg-red-50', 'border-red-600');
+    if (e.dataTransfer.files.length > 0) {
+        archivos = [...e.dataTransfer.files];
+        actualizarTextoArchivos();
+    }
+});
+
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length > 0) {
+      archivos = [...fileInput.files];
+      actualizarTextoArchivos();
+  }
+});
+
+function actualizarTextoArchivos() {
+    fileName.innerHTML = `<span class="font-bold text-red-800">${archivos.length} imagen(es) lista(s)</span>`;
+}
+
+// ENVÍO A N8N
+function enviarAN8N() {
+  const curso = document.getElementById("curso").value;
+  const tiempo = document.getElementById("tiempo").value;
+
+  if (!curso || !tiempo || archivos.length === 0) {
+    alert("Por favor, completa el curso, selecciona el tiempo y sube al menos una imagen.");
+    return;
+  }
+
+  // Simulación de carga (Feedback visual)
+  const btn = document.querySelector('button');
+  const originalText = btn.innerText;
+  btn.innerText = "Generando...";
+  btn.disabled = true;
+  btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+  const formData = new FormData();
+  formData.append("curso", curso);
+  formData.append("tiempo", tiempo);
+
+  archivos.forEach((file, i) => {
+    formData.append(`imagen_${i}`, file);
+  });
+
+  fetch("https://TU-WEBHOOK-DE-N8N", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error al generar el PDF. Revisa la consola para más detalles.");
+  })
+  .finally(() => {
+      // Restaurar botón
+      btn.innerText = originalText;
+      btn.disabled = false;
+      btn.classList.remove('opacity-75', 'cursor-not-allowed');
+  });
+}
+</script>
+
+</body>
+</html>
