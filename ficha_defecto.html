@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" href="logo.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <style>
 canvas {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -26,59 +27,92 @@ canvas {
 @keyframes spin { 100% { transform: rotate(360deg); } }
 </style>
 </head>
+
 <body class="bg-gray-50 h-screen w-screen overflow-x-hidden font-sans flex flex-col">
 
-    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-center shadow-lg flex-none">
-        <h1 class="text-2xl md:text-3xl font-extrabold text-white flex justify-center items-center">
-            <i class="fa-solid fa-file-pdf mr-2"></i>Foto a Ficha PDF
-        </h1>
-        <p class="text-blue-100 text-xs md:text-sm">Sube una imagen y genera tu PDF</p>
-    </div>
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-center shadow-lg flex-none">
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white flex justify-center items-center">
+        <i class="fa-solid fa-file-pdf mr-2"></i>Foto a Ficha PDF
+    </h1>
+    <p class="text-blue-100 text-xs md:text-sm">Sube una imagen y genera tu PDF</p>
+</div>
 
-    <div class="flex-grow flex flex-col items-center p-4 w-full max-w-6xl mx-auto">
+<div class="flex-grow flex flex-col items-center p-4 w-full max-w-6xl mx-auto">
 
-        <div class="w-full flex flex-col flex-grow">
+    <div class="w-full flex flex-col flex-grow">
 
-            <label class="block text-lg font-semibold mb-2 text-gray-700 text-center">Selecciona una imagen</label>
-            
-            <div onclick="photoInput.click()" id="dropZone"
-                 class="w-full min-h-[60vh] flex flex-col justify-center items-center border-4 border-dashed border-gray-300 rounded-3xl cursor-pointer hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 group bg-white">
-                
-                <input type="file" id="photoInput" accept="image/*" class="hidden">
-                
-                <div class="text-8xl md:text-9xl text-gray-300 mb-6 group-hover:text-blue-500 transition-transform group-hover:scale-110 duration-300">
-                    <i class="fa-solid fa-camera"></i>
-                </div>
-                
-                <p id="fileName" class="text-gray-500 text-xl md:text-2xl font-medium group-hover:text-blue-700">
-                    Toca aquí para subir o tomar foto
-                </p>
+        <label class="block text-lg font-semibold mb-2 text-gray-700 text-center">
+            Selecciona una imagen
+        </label>
+        
+        <!-- DROPZONE -->
+        <div onclick="photoInput.click()" id="dropZone"
+             class="group w-full min-h-[60vh] flex flex-col justify-center items-center
+                    border-4 border-dashed border-gray-300 rounded-3xl cursor-pointer
+                    bg-white hover:bg-blue-50 hover:border-blue-400
+                    transition-all duration-500">
+
+            <input type="file" id="photoInput" accept="image/*" class="hidden">
+
+            <!-- ICONO NUEVO -->
+            <div class="text-7xl md:text-9xl text-gray-300 mb-6
+                        transition-all duration-500 transform
+                        group-hover:text-blue-600
+                        group-hover:scale-110">
+                <i class="fa-solid fa-file-arrow-up"></i>
             </div>
 
-            <div id="canvasContainer" class="hidden w-full min-h-[60vh] bg-gray-100 p-4 rounded-3xl shadow-inner flex items-center justify-center relative border border-gray-200">
-                <canvas id="miCanvas" class="bg-white"></canvas>
-                
-                <button onclick="resetInput()" class="absolute top-4 right-4 bg-white text-gray-700 px-4 py-2 rounded-full shadow-lg font-bold hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-rotate-right mr-2"></i> Cambiar
-                </button>
-            </div>
-
-            <button id="sendBtn" disabled
-                class="mt-6 w-full max-w-3xl mx-auto bg-blue-600 text-white py-5 rounded-2xl font-bold text-xl shadow-lg hover:bg-blue-700 hover:shadow-xl transform active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                onclick="enviar()">
-                Generar PDF
-            </button>
-
-            <div id="status" class="hidden mt-4 text-center p-4 rounded-xl font-medium max-w-3xl mx-auto w-full"></div>
-            <div id="downloadContainer" class="hidden mt-4 text-center max-w-3xl mx-auto w-full"></div>
-
+            <p id="fileName"
+               class="text-gray-500 text-xl md:text-2xl font-medium
+                      transition-colors duration-500
+                      group-hover:text-blue-700">
+                Toca aquí para subir o tomar foto
+            </p>
         </div>
 
+        <!-- CANVAS -->
+        <div id="canvasContainer"
+             class="hidden w-full min-h-[60vh] bg-gray-100 p-4 rounded-3xl
+                    shadow-inner flex items-center justify-center relative
+                    border border-gray-200">
+            <canvas id="miCanvas" class="bg-white"></canvas>
+            
+            <button onclick="resetInput()"
+                class="absolute top-4 right-4 bg-white text-gray-700
+                       px-4 py-2 rounded-full shadow-lg font-bold
+                       hover:bg-gray-100 transition">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Cambiar
+            </button>
+        </div>
+
+        <!-- BOTÓN -->
+        <button id="sendBtn" disabled
+            class="mt-6 w-full max-w-3xl mx-auto
+                   bg-blue-600 text-white py-5 rounded-2xl
+                   font-bold text-xl shadow-lg
+                   hover:bg-blue-700 hover:shadow-xl
+                   transform active:scale-95
+                   transition-all duration-200
+                   disabled:opacity-50 disabled:cursor-not-allowed"
+            onclick="enviar()">
+            Generar PDF
+        </button>
+
+        <div id="status"
+             class="hidden mt-4 text-center p-4 rounded-xl font-medium
+                    max-w-3xl mx-auto w-full"></div>
+
+        <div id="downloadContainer"
+             class="hidden mt-4 text-center max-w-3xl mx-auto w-full"></div>
+
     </div>
 
-    <div class="p-3 text-center text-xs text-gray-400 bg-gray-100 flex-none">
-        DLP Academy Tool
-    </div>
+</div>
+
+<footer class="p-3 text-center text-xs text-gray-400 bg-gray-100 flex-none">
+    DLP Academy Tool
+</footer>
 
 <script>
 const N8N_WEBHOOK_URL = "https://podzolic-dorethea-rancorously.ngrok-free.dev/webhook-test/711e538b-9d63-42bb-8494-873301ffdf39";
@@ -92,9 +126,8 @@ const photoInput = document.getElementById("photoInput");
 const dropZone = document.getElementById("dropZone");
 const canvasContainer = document.getElementById("canvasContainer");
 
-// Función para volver a mostrar la zona de carga si quieren cambiar la foto
 function resetInput() {
-    photoInput.value = ''; // Limpiar input
+    photoInput.value = '';
     canvasContainer.classList.add("hidden");
     dropZone.classList.remove("hidden");
     sendBtn.disabled = true;
@@ -112,21 +145,19 @@ photoInput.onchange = e => {
     reader.onload = ev => {
         const img = new Image();
         img.onload = () => {
-            const max = 1600; // Aumentado para mejor calidad en pantalla grande
+            const max = 1600;
             let w = img.width, h = img.height;
             if (w > max) { h *= max / w; w = max; }
             canvas.width = w;
             canvas.height = h;
-            ctx.drawImage(img,0,0,w,h);
-            
-            // Intercambiar visualización: Ocultar dropZone, mostrar Canvas
+            ctx.drawImage(img, 0, 0, w, h);
+
             dropZone.classList.add("hidden");
             canvasContainer.classList.remove("hidden");
-            
             sendBtn.disabled = false;
-        }
+        };
         img.src = ev.target.result;
-    }
+    };
     reader.readAsDataURL(file);
 };
 
@@ -140,31 +171,31 @@ async function enviar() {
         fd.append("data", blob, "imagen.jpg");
 
         try {
-            const res = await fetch(N8N_WEBHOOK_URL,{
-                method:"POST",
-                body:fd
+            const res = await fetch(N8N_WEBHOOK_URL, {
+                method: "POST",
+                body: fd
             });
-            if (!res.ok) throw "n8n no respondió ("+res.status+")";
+            if (!res.ok) throw "n8n no respondió";
 
             const data = await res.blob();
-            descargar(data,"Documento.pdf");
+            descargar(data, "Documento.pdf");
             crearBotonDescarga(data, "Documento.pdf");
             mensaje("¡PDF listo! La descarga comenzará automáticamente.");
-        } catch(e){
-            mensaje("Error: Verifica que n8n esté activo y el túnel funcionando.", false);
+        } catch (e) {
+            mensaje("Error: Verifica que n8n esté activo.", false);
             console.error(e);
         } finally {
-            sendBtn.innerHTML="Generar PDF";
+            sendBtn.innerHTML = "Generar PDF";
             sendBtn.disabled = false;
         }
-    },"image/jpeg",0.85);
+    }, "image/jpeg", 0.85);
 }
 
-function descargar(blob,nombre){
+function descargar(blob, nombre) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download=nombre;
+    a.download = nombre;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -181,9 +212,13 @@ function crearBotonDescarga(blob, nombre) {
     downloadContainer.classList.remove("hidden");
 }
 
-function mensaje(txt, ok=true){
+function mensaje(txt, ok = true) {
     status.innerHTML = txt;
-    status.className = `mt-4 text-base text-center p-4 rounded-xl font-medium shadow-sm ${ok ? "bg-green-100 text-green-800 border border-green-200" : "bg-red-100 text-red-800 border border-red-200"}`;
+    status.className = `mt-4 text-base text-center p-4 rounded-xl font-medium shadow-sm ${
+        ok
+        ? "bg-green-100 text-green-800 border border-green-200"
+        : "bg-red-100 text-red-800 border border-red-200"
+    }`;
     status.classList.remove("hidden");
 }
 </script>
